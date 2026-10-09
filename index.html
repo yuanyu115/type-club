@@ -30,7 +30,7 @@ h1{font-size:clamp(27px,5vw,40px);margin:12px 0}
 .small{text-align:center;font-size:13px;color:#8392a7}
 #target{text-align:center;font-size:76px;font-weight:900;color:#5286cb;margin:12px 0}
 #finger{text-align:center;color:#7291bc;margin-bottom:22px;min-height:24px}
-.keyboard{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;max-width:470px;margin:0 auto 22px}
+.keyboard{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:5px;max-width:650px;margin:0 auto 22px}
 .key{padding:16px 2px;text-align:center;background:#f4f7fc;border:2px solid #e0e9f5;border-radius:12px;font-size:23px;font-weight:bold}
 .key.active{background:#dceaff;border-color:#70a3eb;color:#3268b2;transform:translateY(-3px)}
 .key.done{background:#e2f5eb;border-color:#a3d9bd;color:#39835f}
@@ -60,16 +60,39 @@ footer{text-align:center;padding:28px;font-size:12px;color:#9aa8ba}
   <div class="small">請按下實體鍵盤上的這個字母</div>
   <div id="target">A</div>
   <div id="finger">左手小指 👈</div>
-  <div class="keyboard" id="keyboard">
-   <div class="key" data-key="A">A</div>
-   <div class="key" data-key="S">S</div>
-   <div class="key" data-key="D">D</div>
-   <div class="key" data-key="F">F</div>
-   <div class="key" data-key="J">J</div>
-   <div class="key" data-key="K">K</div>
-   <div class="key" data-key="L">L</div>
-   <div class="key" data-key=";">;</div>
-  </div>
+ ```html
+<div class="keyboard" id="keyboard">
+  <div class="key" data-key="Q">Q</div>
+  <div class="key" data-key="W">W</div>
+  <div class="key" data-key="E">E</div>
+  <div class="key" data-key="R">R</div>
+  <div class="key" data-key="T">T</div>
+  <div class="key" data-key="Y">Y</div>
+  <div class="key" data-key="U">U</div>
+  <div class="key" data-key="I">I</div>
+  <div class="key" data-key="O">O</div>
+  <div class="key" data-key="P">P</div>
+
+  <div class="key" data-key="A">A</div>
+  <div class="key" data-key="S">S</div>
+  <div class="key" data-key="D">D</div>
+  <div class="key" data-key="F">F</div>
+  <div class="key" data-key="G">G</div>
+  <div class="key" data-key="H">H</div>
+  <div class="key" data-key="J">J</div>
+  <div class="key" data-key="K">K</div>
+  <div class="key" data-key="L">L</div>
+  <div class="key" data-key=";">;</div>
+
+  <div class="key" data-key="Z">Z</div>
+  <div class="key" data-key="X">X</div>
+  <div class="key" data-key="C">C</div>
+  <div class="key" data-key="V">V</div>
+  <div class="key" data-key="B">B</div>
+  <div class="key" data-key="N">N</div>
+  <div class="key" data-key="M">M</div>
+</div>
+```
   <div id="message" aria-live="polite">準備好了嗎？按下鍵盤上的 A 開始！</div>
   <div class="actions"><button id="restart">↻ 重新練習</button></div>
   <div class="note">
@@ -82,16 +105,40 @@ footer{text-align:center;padding:28px;font-size:12px;color:#9aa8ba}
 </main>
 <footer>MADE FOR YOUR FIRST TYPING JOURNEY · TYPE CLUB</footer>
 <script>
-const lessons=[
- {key:"A",finger:"左手小指 👈"},
- {key:"S",finger:"左手無名指"},
- {key:"D",finger:"左手中指"},
- {key:"F",finger:"左手食指 ☝️"},
- {key:"J",finger:"右手食指 ☝️"},
- {key:"K",finger:"右手中指"},
- {key:"L",finger:"右手無名指"},
- {key:";",finger:"右手小指 👉"}
+```javascript
+const lessons = [
+  // 第一關：中排
+  { key: "A", finger: "左手小指 👈" },
+  { key: "S", finger: "左手無名指" },
+  { key: "D", finger: "左手中指" },
+  { key: "F", finger: "左手食指 ☝️" },
+  { key: "J", finger: "右手食指 ☝️" },
+  { key: "K", finger: "右手中指" },
+  { key: "L", finger: "右手無名指" },
+  { key: ";", finger: "右手小指 👉" },
+
+  // 第二關：上排
+  { key: "Q", finger: "左手小指 👈" },
+  { key: "W", finger: "左手無名指" },
+  { key: "E", finger: "左手中指" },
+  { key: "R", finger: "左手食指 ☝️" },
+  { key: "T", finger: "左手食指 ☝️" },
+  { key: "Y", finger: "右手食指 ☝️" },
+  { key: "U", finger: "右手食指 ☝️" },
+  { key: "I", finger: "右手中指" },
+  { key: "O", finger: "右手無名指" },
+  { key: "P", finger: "右手小指 👉" },
+
+  // 第三關：下排
+  { key: "Z", finger: "左手小指 👈" },
+  { key: "X", finger: "左手無名指" },
+  { key: "C", finger: "左手中指" },
+  { key: "V", finger: "左手食指 ☝️" },
+  { key: "B", finger: "左手食指 ☝️" },
+  { key: "N", finger: "右手食指 ☝️" },
+  { key: "M", finger: "右手食指 ☝️" }
 ];
+```
 let index=0,correct=0,mistakes=0,finished=false;
 const target=document.getElementById("target");
 const finger=document.getElementById("finger");
@@ -107,7 +154,7 @@ function render(){
   target.textContent="🎉";
   finger.textContent="第一關練習完成！";
   step.textContent="LEVEL 01 COMPLETE";
-  score.textContent=`答對 ${correct} / 8`;
+ score.textContent=`答對 ${correct} / ${lessons.length}`;
   bar.style.width="100%";
   const accuracy=Math.round(correct/Math.max(1,correct+mistakes)*100);
   message.textContent=`太棒了！你的正確率是 ${accuracy}%。`;
@@ -120,8 +167,7 @@ function render(){
  step.textContent=`練習 ${index+1} / ${lessons.length}`;
  score.textContent=`答對 ${correct} 題`;
  bar.style.width=`${index/lessons.length*100}%`;
- document.querySelector(`.key[data-key="${lesson.key}"]`).classList.add("active");
-}
+ document.querySelector(`.key[data-key="${lesson.key}"]`)?.classList.add("active");
 document.addEventListener("keydown",event=>{
  if(finished||event.ctrlKey||event.altKey||event.metaKey)return;
  if(!lessons[index])return;
