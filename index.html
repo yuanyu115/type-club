@@ -112,6 +112,8 @@ const lessons = [
   { key: "S", finger: "左手無名指" },
   { key: "D", finger: "左手中指" },
   { key: "F", finger: "左手食指 ☝️" },
+  { key: "G", finger: "左手食指 ☝️" },
+  { key: "H", finger: "右手食指 ☝️" },
   { key: "J", finger: "右手食指 ☝️" },
   { key: "K", finger: "右手中指" },
   { key: "L", finger: "右手無名指" },
@@ -155,19 +157,19 @@ const lessons = [
 const levels = [
   {
     name: "第一關：中排字母",
-    keys: lessons.slice(0, 8)
+    keys: lessons.slice(0, 10)
   },
   {
     name: "第二關：上排字母",
-    keys: lessons.slice(8, 18)
+    keys: lessons.slice(10, 20)
   },
   {
     name: "第三關：下排字母",
-    keys: lessons.slice(18, 25)
+    keys: lessons.slice(20, 27)
   },
   {
     name: "第四關：數字鍵",
-    keys: lessons.slice(25, 35)
+    keys: lessons.slice(27, 37)
   }
 ];
 function getCurrentLessons() {
