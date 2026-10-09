@@ -59,6 +59,15 @@ footer{text-align:center;padding:28px;font-size:12px;color:#9aa8ba}
   <div class="track"><div id="bar"></div></div>
   <div class="small">請按下實體鍵盤上的這個字母</div>
   <div id="target">A</div>
+  
+<input
+  id="wordInput"
+  type="text"
+  placeholder="在這裡輸入英文單字或句子"
+  autocomplete="off"
+  style="display:none; width:80%; max-width:400px; padding:12px; margin:16px auto; font-size:18px; border:2px solid #b9dcf5; border-radius:12px;"
+/>
+
   <div id="finger">左手小指 👈</div>
 
 <div class="keyboard" id="keyboard">
@@ -93,6 +102,7 @@ footer{text-align:center;padding:28px;font-size:12px;color:#9aa8ba}
   <div class="key" data-key="M">M</div>
 </div>
   <div id="message" aria-live="polite">準備好了嗎？按下鍵盤上的 A 開始！</div>
+  <div id="starReward" style="display:none; font-size:28px; margin:16px 0;">⭐</div>
   <div class="actions"><button id="restart">↻ 重新練習</button></div>
   <button id="nextLevel" style="display: none;">下一關 →</button>
   <div class="note">
@@ -154,35 +164,99 @@ const lessons = [
 ];
 
 
+const wordBank = [
+  "cat",
+  "dog",
+  "apple",
+  "happy",
+  "school",
+  "friend",
+  "beautiful",
+  "computer",
+  "wonderful",
+  "adventure"
+];
+
+const sentenceBank = [
+  "I like cats.",
+  "This is my book.",
+  "I am happy today.",
+  "My friend is kind.",
+  "I love learning English.",
+  "Typing is fun and easy.",
+  "Practice makes us better.",
+  "Today is a beautiful day."
+];
+
+function shuffleQuestions(questions) {
+  const shuffled = [...questions];
+
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+
+  return shuffled;
+}
+
+
+
 const levels = [
   {
     name: "第一關：中排字母",
+    type: "keys",
     keys: lessons.slice(0, 10)
   },
   {
     name: "第二關：上排字母",
+    type: "keys",
     keys: lessons.slice(10, 20)
   },
   {
     name: "第三關：下排字母",
+    type: "keys",
     keys: lessons.slice(20, 27)
   },
   {
     name: "第四關：數字鍵",
+    type: "keys",
     keys: lessons.slice(27, 37)
+  },
+  {
+    name: "第五關：隨機英文單字",
+    type: "words",
+    questions: wordBank
+  },
+  {
+    name: "第六關：隨機英文句子",
+    type: "sentences",
+    questions: sentenceBank
   }
 ];
+
+
 function getCurrentLessons() {
-  return levels[level].keys;
+  const currentLevel = levels[level];
+
+  if (currentLevel.type === "words" ||
+      currentLevel.type === "sentences") {
+    return currentLevel.questions;
+  }
+
+  return currentLevel.keys;
 }
+
 
 let level = 0;
 let index = 0;
 let correct = 0;
 let mistakes = 0;
 let finished = false;
-
+let stars = 0;
+let starAwarded = false;
+ 
 const target = document.getElementById("target");
+const wordInput = document.getElementById("wordInput");
 const finger = document.getElementById("finger");
 const message = document.getElementById("message");
 const step = document.getElementById("step");
@@ -209,6 +283,16 @@ score.textContent = `答對 ${correct} / ${getCurrentLessons().length}`;
     );
 
     message.textContent = `太棒了！你的正確率是 ${accuracy}%。`;
+   
+if (!starAwarded) {
+  stars++;
+  starAwarded = true;
+}
+
+document.getElementById("starReward").style.display = "block";
+document.getElementById("starReward").textContent =
+  `⭐ 恭喜通關！獲得星星！目前共有 ${stars} 顆`;
+
 
     document.querySelectorAll(".key").forEach(el => {
       el.classList.add("done");
@@ -217,61 +301,137 @@ score.textContent = `答對 ${correct} / ${getCurrentLessons().length}`;
     return;
   }
 
-  const lesson = getCurrentLessons()[index];
+const currentLevel = levels[level];
+const lesson = getCurrentLessons()[index];
 
-  target.textContent = lesson.key;
-  finger.textContent = lesson.finger;
-  step.textContent = `${levels[level].name} · 練習 ${index + 1} / ${getCurrentLessons().length}`;
+if (currentLevel.type === "words" ||
+    currentLevel.type === "sentences") {
+
+  wordInput.style.display = "block";
+  document.getElementById("keyboard").style.display = "none";
+
+  target.textContent = lesson;
+  finger.textContent = currentLevel.type === "words"
+    ? "請輸入完整英文單字 ✨"
+    : "請輸入完整英文句子 ✨";
+
+  wordInput.value = "";
+  step.textContent = `${currentLevel.name} · 題目 ${index + 1} / ${getCurrentLessons().length}`;
   score.textContent = `答對 ${correct} 題`;
   bar.style.width = `${(index / getCurrentLessons().length) * 100}%`;
 
-  document
-    .querySelector(`.key[data-key="${lesson.key}"]`)
-    ?.classList.add("active");
-}
+  wordInput.focus();
+
+} else {
+
+  wordInput.style.display = "none";
+  document.getElementById("keyboard").style.display = "grid";
+
+  target.textContent = lesson.key;
+
 
 
 document.addEventListener("keydown", event => {
-    if (finished || event.ctrlKey || event.altKey || event.metaKey) {
-        return;
-    }
+  const currentLevel = levels[level];
 
-    if (!getCurrentLessons()[index]) {
-        return;
-    }
+  if (currentLevel.type === "words" ||
+      currentLevel.type === "sentences") {
+    return;
+  }
 
-    if (event.key.toUpperCase() === getCurrentLessons()[index].key) {
-        correct++;
-        index++;
-        message.textContent = "答對了！做得很好 ✨";
-        render();
-    } else {
-        mistakes++;
-        message.textContent = "再試一次～找找看亮起來的按鍵 🩵";
-    }
+  if (finished || event.ctrlKey || event.altKey || event.metaKey) {
+    return;
+  }
+
+  const lesson = getCurrentLessons()[index];
+  if (!lesson) return;
+
+  if (event.key.toUpperCase() === lesson.key) {
+    correct++;
+    index++;
+    message.textContent = "答對了！做得很好 ✨";
+    render();
+  } else {
+    mistakes++;
+    message.textContent = "再試一次～找找看亮起來的按鍵 🩵";
+  }
 });
+
+wordInput.addEventListener("input", () => {
+  const currentLevel = levels[level];
+
+  if (finished ||
+      (currentLevel.type !== "words" &&
+       currentLevel.type !== "sentences")) {
+    return;
+  }
+
+  const answer = getCurrentLessons()[index];
+
+  if (wordInput.value.trim() === answer) {
+    correct++;
+    index++;
+    message.textContent = "答對了！做得很好 ✨";
+    render();
+  }
+});
+
+
 
 document.getElementById("restart").addEventListener("click", () => {
   index = 0;
   correct = 0;
   mistakes = 0;
   finished = false;
- 
+ starAwarded = false;
+ document.getElementById("starReward").style.display = "none";
+document.getElementById("starReward").textContent = "⭐";
 
-  message.textContent = "準備好了嗎？按下鍵盤上的 A 開始！";
+  const currentLevel = levels[level];
+
+  if (currentLevel.type === "words" ||
+      currentLevel.type === "sentences") {
+    currentLevel.questions = shuffleQuestions(
+      currentLevel.type === "words" ? wordBank : sentenceBank
+    );
+  }
+
+  message.textContent = currentLevel.type === "keys"
+    ? "準備好了嗎？按下鍵盤上的 A 開始！"
+    : "準備好了嗎？挑戰新的題目吧！";
+
   render();
 });
- document.getElementById("nextLevel").addEventListener("click", () => {
+
+ 
+document.getElementById("nextLevel").addEventListener("click", () => {
   if (level < levels.length - 1) {
     level++;
     index = 0;
     correct = 0;
     mistakes = 0;
     finished = false;
-    message.textContent = "準備好了嗎？開始新的一關！";
+    starAwarded = false;
+   document.getElementById("starReward").style.display = "none";
+document.getElementById("starReward").textContent = "⭐";
+    
+    const currentLevel = levels[level];
+
+    if (currentLevel.type === "words" ||
+        currentLevel.type === "sentences") {
+      currentLevel.questions = shuffleQuestions(
+        currentLevel.type === "words" ? wordBank : sentenceBank
+      );
+    }
+
+    message.textContent = currentLevel.type === "keys"
+      ? "準備好了嗎？開始新的一關！"
+      : "準備好了嗎？挑戰新的題目吧！";
+
     render();
   }
 });
+
 
 render();
 </script>
