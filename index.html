@@ -170,7 +170,15 @@ const levels = [
     keys: lessons.slice(25, 35)
   }
 ];
+function getCurrentLessons() {
+  return levels[level].keys;
+}
 
+let level = 0;
+let index = 0;
+let correct = 0;
+let mistakes = 0;
+let finished = false;
 
 const target = document.getElementById("target");
 const finger = document.getElementById("finger");
