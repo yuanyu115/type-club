@@ -1,0 +1,146 @@
+
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TYPE CLUB | 青春英打教室</title>
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;font-family:Arial,"Microsoft JhengHei",sans-serif;
+ background:#f0f5fc;color:#35445c
+}
+header{
+ padding:20px 7%;background:white;display:flex;
+ justify-content:space-between;align-items:center;
+ border-bottom:1px solid #e1eaf6
+}
+.logo{font-size:23px;font-weight:900;color:#5286cb;letter-spacing:2px}
+.tag{font-size:12px;color:#5286cb;background:#e7f0ff;padding:9px 13px;border-radius:20px}
+main{width:min(760px,92%);margin:35px auto}
+.intro{text-align:center;margin-bottom:25px}
+.eyebrow{font-size:12px;letter-spacing:3px;color:#6e99d1;font-weight:bold}
+h1{font-size:clamp(27px,5vw,40px);margin:12px 0}
+.intro p{color:#8290a4;line-height:1.8}
+.card{background:white;border:1px solid #e0e9f5;border-radius:24px;padding:clamp(18px,4vw,32px);box-shadow:0 12px 35px #c8d9ee44}
+.stats{display:flex;justify-content:space-between;font-size:13px;color:#8290a4}
+.track{height:7px;background:#edf2f9;border-radius:20px;margin:12px 0 28px;overflow:hidden}
+#bar{height:100%;width:0;background:#80afea;transition:width .2s}
+.small{text-align:center;font-size:13px;color:#8392a7}
+#target{text-align:center;font-size:76px;font-weight:900;color:#5286cb;margin:12px 0}
+#finger{text-align:center;color:#7291bc;margin-bottom:22px;min-height:24px}
+.keyboard{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;max-width:470px;margin:0 auto 22px}
+.key{padding:16px 2px;text-align:center;background:#f4f7fc;border:2px solid #e0e9f5;border-radius:12px;font-size:23px;font-weight:bold}
+.key.active{background:#dceaff;border-color:#70a3eb;color:#3268b2;transform:translateY(-3px)}
+.key.done{background:#e2f5eb;border-color:#a3d9bd;color:#39835f}
+#message{text-align:center;min-height:28px;color:#5286cb;font-weight:bold;line-height:1.7}
+.actions{text-align:center;margin-top:18px}
+button{border:0;border-radius:13px;padding:13px 21px;background:#70a0e2;color:white;font-size:15px;font-weight:bold;cursor:pointer}
+button:hover{background:#4e82cc}
+.note{margin-top:22px;padding:16px;background:#fff8e4;border-radius:14px;font-size:13px;line-height:1.9}
+footer{text-align:center;padding:28px;font-size:12px;color:#9aa8ba}
+@media(max-width:450px){header{padding:16px 4%}.tag{font-size:10px}.key{padding:13px 1px}}
+</style>
+</head>
+<body>
+<header>
+ <div class="logo">✳ TYPE CLUB</div>
+ <div class="tag">YOUR TYPING JOURNEY</div>
+</header>
+<main>
+ <section class="intro">
+  <div class="eyebrow">LEVEL 01 · BEGINNER</div>
+  <h1>找到你的打字起點 🩵</h1>
+  <p>今天開始認識鍵盤中排！<br>慢慢練習，不用急著打很快。</p>
+ </section>
+ <section class="card">
+  <div class="stats"><span id="step">練習 1 / 8</span><span id="score">答對 0 題</span></div>
+  <div class="track"><div id="bar"></div></div>
+  <div class="small">請按下實體鍵盤上的這個字母</div>
+  <div id="target">A</div>
+  <div id="finger">左手小指 👈</div>
+  <div class="keyboard" id="keyboard">
+   <div class="key" data-key="A">A</div>
+   <div class="key" data-key="S">S</div>
+   <div class="key" data-key="D">D</div>
+   <div class="key" data-key="F">F</div>
+   <div class="key" data-key="J">J</div>
+   <div class="key" data-key="K">K</div>
+   <div class="key" data-key="L">L</div>
+   <div class="key" data-key=";">;</div>
+  </div>
+  <div id="message" aria-live="polite">準備好了嗎？按下鍵盤上的 A 開始！</div>
+  <div class="actions"><button id="restart">↻ 重新練習</button></div>
+  <div class="note">
+   ✎ <b>新手小筆記</b><br>
+   左手小指負責 A、無名指負責 S、中指負責 D、食指負責 F。<br>
+   右手食指負責 J、中指負責 K、無名指負責 L、小指負責分號 ;。<br>
+   F 和 J 通常有小凸點，可以用來確認手指的位置。
+  </div>
+ </section>
+</main>
+<footer>MADE FOR YOUR FIRST TYPING JOURNEY · TYPE CLUB</footer>
+<script>
+const lessons=[
+ {key:"A",finger:"左手小指 👈"},
+ {key:"S",finger:"左手無名指"},
+ {key:"D",finger:"左手中指"},
+ {key:"F",finger:"左手食指 ☝️"},
+ {key:"J",finger:"右手食指 ☝️"},
+ {key:"K",finger:"右手中指"},
+ {key:"L",finger:"右手無名指"},
+ {key:";",finger:"右手小指 👉"}
+];
+let index=0,correct=0,mistakes=0,finished=false;
+const target=document.getElementById("target");
+const finger=document.getElementById("finger");
+const message=document.getElementById("message");
+const step=document.getElementById("step");
+const score=document.getElementById("score");
+const bar=document.getElementById("bar");
+
+function render(){
+ finished=index>=lessons.length;
+ document.querySelectorAll(".key").forEach(el=>el.classList.remove("active","done"));
+ if(finished){
+  target.textContent="🎉";
+  finger.textContent="第一關練習完成！";
+  step.textContent="LEVEL 01 COMPLETE";
+  score.textContent=`答對 ${correct} / 8`;
+  bar.style.width="100%";
+  const accuracy=Math.round(correct/Math.max(1,correct+mistakes)*100);
+  message.textContent=`太棒了！你的正確率是 ${accuracy}%。`;
+  document.querySelectorAll(".key").forEach(el=>el.classList.add("done"));
+  return;
+ }
+ const lesson=lessons[index];
+ target.textContent=lesson.key;
+ finger.textContent=lesson.finger;
+ step.textContent=`練習 ${index+1} / ${lessons.length}`;
+ score.textContent=`答對 ${correct} 題`;
+ bar.style.width=`${index/lessons.length*100}%`;
+ document.querySelector(`.key[data-key="${lesson.key}"]`).classList.add("active");
+}
+document.addEventListener("keydown",event=>{
+ if(finished||event.ctrlKey||event.altKey||event.metaKey)return;
+ if(!lessons[index])return;
+ if(event.key.toUpperCase()===lessons[index].key){
+  correct++;
+  index++;
+  message.textContent="答對了！做得很好 ✨";
+  render();
+ }else{
+  mistakes++;
+  message.textContent="再試一次～找找看亮起來的按鍵 🩵";
+ }
+});
+document.getElementById("restart").addEventListener("click",()=>{
+ index=0;correct=0;mistakes=0;finished=false;
+ message.textContent="準備好了嗎？按下鍵盤上的 A 開始！";
+ render();
+});
+render();
+</script>
+</body>
+</html>
