@@ -103,8 +103,8 @@ footer{text-align:center;padding:28px;font-size:12px;color:#9aa8ba}
  </section>
 </main>
 <footer>MADE FOR YOUR FIRST TYPING JOURNEY · TYPE CLUB</footer>
-<script>
 
+<script>
 const lessons = [
   // 第一關：中排
   { key: "A", finger: "左手小指 👈" },
@@ -137,55 +137,91 @@ const lessons = [
   { key: "N", finger: "右手食指 ☝️" },
   { key: "M", finger: "右手食指 ☝️" }
 ];
-let index=0,correct=0,mistakes=0,finished=false;
-const target=document.getElementById("target");
-const finger=document.getElementById("finger");
-const message=document.getElementById("message");
-const step=document.getElementById("step");
-const score=document.getElementById("score");
-const bar=document.getElementById("bar");
 
-function render(){
- finished=index>=lessons.length;
- document.querySelectorAll(".key").forEach(el=>el.classList.remove("active","done"));
- if(finished){
-  target.textContent="🎉";
-  finger.textContent="第一關練習完成！";
-  step.textContent="LEVEL 01 COMPLETE";
- score.textContent=`答對 ${correct} / ${lessons.length}`;
-  bar.style.width="100%";
-  const accuracy=Math.round(correct/Math.max(1,correct+mistakes)*100);
-  message.textContent=`太棒了！你的正確率是 ${accuracy}%。`;
-  document.querySelectorAll(".key").forEach(el=>el.classList.add("done"));
-  return;
- }
- const lesson=lessons[index];
- target.textContent=lesson.key;
- finger.textContent=lesson.finger;
- step.textContent=`練習 ${index+1} / ${lessons.length}`;
- score.textContent=`答對 ${correct} 題`;
- bar.style.width=`${index/lessons.length*100}%`;
- document.querySelector(`.key[data-key="${lesson.key}"]`)?.classList.add("active");
-document.addEventListener("keydown",event=>{
- if(finished||event.ctrlKey||event.altKey||event.metaKey)return;
- if(!lessons[index])return;
- if(event.key.toUpperCase()===lessons[index].key){
-  correct++;
-  index++;
-  message.textContent="答對了！做得很好 ✨";
+let index = 0;
+let correct = 0;
+let mistakes = 0;
+let finished = false;
+
+const target = document.getElementById("target");
+const finger = document.getElementById("finger");
+const message = document.getElementById("message");
+const step = document.getElementById("step");
+const score = document.getElementById("score");
+const bar = document.getElementById("bar");
+
+function render() {
+  finished = index >= lessons.length;
+
+  document.querySelectorAll(".key").forEach(el => {
+    el.classList.remove("active", "done");
+  });
+
+  if (finished) {
+    target.textContent = "🎉";
+    finger.textContent = "全部練習完成！";
+    step.textContent = "LEVEL 01 COMPLETE";
+    score.textContent = `答對 ${correct} / ${lessons.length}`;
+    bar.style.width = "100%";
+
+    const accuracy = Math.round(
+      correct / Math.max(1, correct + mistakes) * 100
+    );
+
+    message.textContent = `太棒了！你的正確率是 ${accuracy}%。`;
+
+    document.querySelectorAll(".key").forEach(el => {
+      el.classList.add("done");
+    });
+
+    return;
+  }
+
+  const lesson = lessons[index];
+
+  target.textContent = lesson.key;
+  finger.textContent = lesson.finger;
+  step.textContent = `練習 ${index + 1} / ${lessons.length}`;
+  score.textContent = `答對 ${correct} 題`;
+  bar.style.width = `${index / lessons.length * 100}%`;
+
+  document
+    .querySelector(`.key[data-key="${lesson.key}"]`)
+    ?.classList.add("active");
+}
+
+document.addEventListener("keydown", event => {
+  if (finished || event.ctrlKey || event.altKey || event.metaKey) {
+    return;
+  }
+
+  if (!lessons[index]) {
+    return;
+  }
+
+  if (event.key.toUpperCase() === lessons[index].key) {
+    correct++;
+    index++;
+    message.textContent = "答對了！做得很好 ✨";
+    render();
+  } else {
+    mistakes++;
+    message.textContent = "再試一次～找找看亮起來的按鍵 🩵";
+  }
+});
+
+document.getElementById("restart").addEventListener("click", () => {
+  index = 0;
+  correct = 0;
+  mistakes = 0;
+  finished = false;
+
+  message.textContent = "準備好了嗎？按下鍵盤上的 A 開始！";
   render();
- }else{
-  mistakes++;
-  message.textContent="再試一次～找找看亮起來的按鍵 🩵";
- }
 });
-document.getElementById("restart").addEventListener("click",()=>{
- index=0;correct=0;mistakes=0;finished=false;
- message.textContent="準備好了嗎？按下鍵盤上的 A 開始！";
- render();
-});
-console.log("TYPE CLUB 程式已啟動！");
+
 render();
 </script>
+
 </body>
 </html>
