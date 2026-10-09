@@ -226,11 +226,11 @@ document.addEventListener("keydown", event => {
         return;
     }
 
-    if (!lessons[index]) {
+    if (!getCurrentLessons()[index]) {
         return;
     }
 
-    if (event.key.toUpperCase() === lessons[index].key) {
+    if (event.key.toUpperCase() === getCurrentLessons()[index].key) {
         correct++;
         index++;
         message.textContent = "答對了！做得很好 ✨";
