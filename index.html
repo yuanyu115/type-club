@@ -204,19 +204,13 @@ document.addEventListener("keydown", event => {
 if (event.key.toUpperCase() === lessons[index].key) {
 correct++;
 
-// 答對音效 🔊
-try {
-const audio = new AudioContext();
-const oscillator = audio.createOscillator();
-const gain = audio.createGain();
-
-oscillator.type = "sine";
-oscillator.frequency.value = 880;
-gain.gain.value = 0.08;
-
-oscillator.connect(gain);
-gain.connect(audio.destination);
-
+if (event.key.toUpperCase() === lessons[index].key) {
+correct++;
+index++;
+message.textContent = "答對了！做得很好 ✨";
+render();
+} else {
+mistakes++;
 oscillator.start();
 oscillator.stop(audio.currentTime + 0.12);
 oscillator.onended = () => audio.close();
