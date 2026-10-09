@@ -190,42 +190,25 @@ function render() {
     ?.classList.add("active");
 }
 
+
 document.addEventListener("keydown", event => {
-  if (finished || event.ctrlKey || event.altKey || event.metaKey) {
-    return;
-  }
+    if (finished || event.ctrlKey || event.altKey || event.metaKey) {
+        return;
+    }
 
-  if (!lessons[index]) {
-    return;
-  }
+    if (!lessons[index]) {
+        return;
+    }
 
-  if (event.key.toUpperCase() === lessons[index].key) {
-   
-if (event.key.toUpperCase() === lessons[index].key) {
-correct++;
-
-if (event.key.toUpperCase() === lessons[index].key) {
-correct++;
-index++;
-message.textContent = "答對了！做得很好 ✨";
-render();
-} else {
-mistakes++;
-oscillator.start();
-oscillator.stop(audio.currentTime + 0.12);
-oscillator.onended = () => audio.close();
-} catch (error) {
-console.log("音效無法播放", error);
-}
-
-index++;
-message.textContent = "答對了！做得很好 ✨";
-render();
-
-  } else {
-    mistakes++;
-    message.textContent = "再試一次～找找看亮起來的按鍵 🩵";
-  }
+    if (event.key.toUpperCase() === lessons[index].key) {
+        correct++;
+        index++;
+        message.textContent = "答對了！做得很好 ✨";
+        render();
+    } else {
+        mistakes++;
+        message.textContent = "再試一次～找找看亮起來的按鍵 🩵";
+    }
 });
 
 document.getElementById("restart").addEventListener("click", () => {
