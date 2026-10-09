@@ -94,6 +94,7 @@ footer{text-align:center;padding:28px;font-size:12px;color:#9aa8ba}
 </div>
   <div id="message" aria-live="polite">準備好了嗎？按下鍵盤上的 A 開始！</div>
   <div class="actions"><button id="restart">↻ 重新練習</button></div>
+  <button id="nextLevel" style="display: none;">下一關 →</button>
   <div class="note">
    ✎ <b>新手小筆記</b><br>
    左手小指負責 A、無名指負責 S、中指負責 D、食指負責 F。<br>
@@ -151,6 +152,30 @@ const lessons = [
 ];
 
 
+const levels = [
+  {
+    name: "第一關：中排字母",
+    keys: lessons.slice(0, 8)
+  },
+  {
+    name: "第二關：上排字母",
+    keys: lessons.slice(8, 18)
+  },
+  {
+    name: "第三關：下排字母",
+    keys: lessons.slice(18, 25)
+  },
+  {
+    name: "第四關：數字鍵",
+    keys: lessons.slice(25, 35)
+  }
+];
+
+function getCurrentLessons() {
+  return levels[level].keys;
+}
+
+ 
 let index = 0;
 let correct = 0;
 let mistakes = 0;
@@ -164,7 +189,7 @@ const score = document.getElementById("score");
 const bar = document.getElementById("bar");
 
 function render() {
-  finished = index >= lessons.length;
+  finished = index >= getCurrentLessons().length;
 
   document.querySelectorAll(".key").forEach(el => {
     el.classList.remove("active", "done");
@@ -172,10 +197,11 @@ function render() {
 
   if (finished) {
     target.textContent = "🎉";
-    finger.textContent = "全部練習完成！";
-    step.textContent = "LEVEL 01 COMPLETE";
-    score.textContent = `答對 ${correct} / ${lessons.length}`;
+    finger.textContent = `${levels[level].name} 通關！`;
+step.textContent = `LEVEL 0${level + 1} COMPLETE`;
+score.textContent = `答對 ${correct} / ${getCurrentLessons().length}`;
     bar.style.width = "100%";
+   document.getElementById("nextLevel").style.display = level < levels.length - 1 ? "inline-block" : "none";
 
     const accuracy = Math.round(
       correct / Math.max(1, correct + mistakes) * 100
@@ -190,13 +216,13 @@ function render() {
     return;
   }
 
-  const lesson = lessons[index];
+  const lesson = getCurrentLessons()[index];
 
   target.textContent = lesson.key;
   finger.textContent = lesson.finger;
-  step.textContent = `練習 ${index + 1} / ${lessons.length}`;
+  step.textContent = `${levels[level].name} · 練習 ${index + 1} / ${getCurrentLessons().length}`;
   score.textContent = `答對 ${correct} 題`;
-  bar.style.width = `${index / lessons.length * 100}%`;
+  bar.style.width = `${(index / getCurrentLessons().length) * 100}%`;
 
   document
     .querySelector(`.key[data-key="${lesson.key}"]`)
@@ -229,9 +255,21 @@ document.getElementById("restart").addEventListener("click", () => {
   correct = 0;
   mistakes = 0;
   finished = false;
+ let level = 0;
 
   message.textContent = "準備好了嗎？按下鍵盤上的 A 開始！";
   render();
+});
+ document.getElementById("nextLevel").addEventListener("click", () => {
+  if (level < levels.length - 1) {
+    level++;
+    index = 0;
+    correct = 0;
+    mistakes = 0;
+    finished = false;
+    message.textContent = "準備好了嗎？開始新的一關！";
+    render();
+  }
 });
 
 render();
